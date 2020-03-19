@@ -22,7 +22,7 @@ class BarChart extends Component {
             let countriesList = [];
             data.map((c)=>{
                 return(
-                    casesList.push(c.cases),
+                    casesList.push({"cases": c.cases, "country":c.country}),
                     countriesList.push(c.country)
                 )
             });
@@ -33,9 +33,9 @@ class BarChart extends Component {
                      <td>{c.country}</td>
                      <td>{c.cases}</td>
                      <td>{c.todayCases}</td>
-                     <td>{c.deaths}</td>
+                     <td class="death">{c.deaths}</td>
                      <td>{c.todayDeaths}</td>
-                     <td>{c.recovered}</td>
+                     <td class="recovered">{c.recovered}</td>
                      <td>{c.active}</td>
                  </tr>
                 )
@@ -51,7 +51,7 @@ class BarChart extends Component {
 
     }
     
-    drawChart(casesList, countriesList) {
+    drawChart(casesList) {
       let w = 1000;
       let h = 500;
       const svg = d3.select("body")
@@ -59,26 +59,26 @@ class BarChart extends Component {
       .attr("width", w)
       .attr("height", h)
       .style("margin-left", 100)
-      .style("margin-top", 0);
-      let x,y;
-         
+      .style("overflow-x", "scroll");
+      
       svg.selectAll("rect")
         .data(casesList)
         .enter()
         .append("rect")
-        .attr("x", (d, i) => x = i * 70)
-        .attr("y", (d, i) => y =  h - d/600)
+        .attr("x", (d, i) => i * 70)
+        .attr("y", (d, i) => h - d.cases/600)
         .attr("width", 65)
-        .attr("height", (d, i) => d/600 )
+        .attr("height", (d, i) => d.cases/600 )
         .attr("fill", "grey")
 
         svg.selectAll("text")
-        .data(countriesList).enter()
+        .data(casesList)
+        .enter()
         .append("text")
-        .attr("x", x)
-        .attr("y", y)
-        .text(d => d)
-    }
+        .attr("x", (d, i) => i * 70 + 2)
+        .attr("y", (d, i) => h - d.cases/600 - 10)
+        .text(d => d.country)
+      }
           
     render(){
         return (
@@ -86,6 +86,7 @@ class BarChart extends Component {
             <div id={"#" + this.props.id}></div>
      
            <h1 id='title'>CoVid19 Cases</h1>
+            <div class="tbl-header">
            <table align="center">
                <thead>
                <tr>
@@ -98,10 +99,15 @@ class BarChart extends Component {
                <th>Active</th>
                </tr>
                </thead>
+               </table>
+               </div>
+               <div class="tbl-content">
+               <table>
               <tbody>
                  {this.state.countries}
               </tbody>
            </table>
+           </div>
         </div>
      )
     }
