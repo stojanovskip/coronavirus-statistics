@@ -57,7 +57,7 @@ class BarChart extends Component {
     drawChartJS(casesList, str, orderBy){
         if(str == null)
         {
-            str=""
+            str="";
         }
         
         const myChartRef = this.chartRef.current.getContext("2d");
@@ -149,13 +149,52 @@ class BarChart extends Component {
                       borderColor:"#177F75",
                       fill:"#177F75",
                       data: activeList,
-                  }
+                  },{
+                    label: "Deaths",
+                    type: "bar",
+                    data: deathList,
+                    backgroundColor: "#7F171F",
+                    fill: "#7F171F",
+                    },
+                {
+                    label: "Cases",
+                    data: caseList,
+                    type: "bar",
+                    backgroundColor:" #003366",
+                    fill:" #003366",
+                },
+                {
+                    label: "Today Cases",
+                    type: "bar",
+                    backgroundColor:"#B67721",
+                    fill:"#B67721",
+                    data: todayCasesList,
+                },
+                {
+                    label: "Recovered",
+                    type: "bar",
+                    backgroundColor:"#21B6A8",
+                    fill:"#21B6A8",
+                    data: recoveredList,
+                },
+                {
+                    label: "Today Deaths",
+                    type: "bar",
+                    backgroundColor: "#B6212D",
+                    data: todayDeathsList,
+                    labels: todayDeathsList
+                },
+                {
+                    label: "Active",
+                    type: "bar",
+                    labels: activeList,
+                    backgroundColor:"#177F75",
+                    fill:"#177F75",
+                    data: activeList,
+                }
               ]
           },
-          options: {
-              chartArea: {
-            backgroundColor: 'rgba(255, 255,255, 1)'
-        }
+          options: { 
           }
       });
     }
