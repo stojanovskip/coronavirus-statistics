@@ -25,7 +25,7 @@ class BarChart extends Component {
             let countriesList = [];
             data.map((c)=>{
                 return(
-                    casesList.push({"cases": c.cases, "country":c.country, "deaths":c.deaths}),
+                    casesList.push({"cases": c.cases, "country":c.country, "deaths":c.deaths, "recovered":c.recovered, "todayDeaths":c.todayDeaths, "todayCases":c.todayCases, "active":c.active}),
                     countriesList.push(c.country)
                 )
             });
@@ -56,12 +56,22 @@ class BarChart extends Component {
     }
     drawChartJS(casesList){
         const myChartRef = this.chartRef.current.getContext("2d");
-        let dataList = [];
+        let deathList = [];
         let countryList = [];
+        let caseList = [];
+        let todayDeathsList = [];
+        let todayCasesList = [];
+        let activeList = [];
+        let recoveredList = [];
         for(let i = 0; i<casesList.length;i++)
         {
-            dataList.push(casesList[i].deaths);
+            deathList.push(casesList[i].deaths);
             countryList.push(casesList[i].country);
+            caseList.push(casesList[i].cases);
+            todayDeathsList.push(casesList[i].todayDeaths);
+            todayCasesList.push(casesList[i].todayCases);
+            activeList.push(casesList[i].active);
+            recoveredList.push(casesList[i].recovered)
         }
       new Chart(myChartRef, {
           type: "line",
@@ -71,7 +81,27 @@ class BarChart extends Component {
               datasets: [
                   {
                       label: "Deaths",
-                      data: dataList,
+                      data: deathList
+                  },
+                  {
+                      label: "Cases",
+                      data: caseList,
+                  },
+                  {
+                      label: "Today Cases",
+                      data: todayCasesList,
+                  },
+                  {
+                      label: "Recovered",
+                      data: recoveredList,
+                  },
+                  {
+                      label: "Today Deaths",
+                      data: todayDeathsList,
+                  },
+                  {
+                      label: "Active",
+                      data: activeList,
                   }
               ]
           },
@@ -141,7 +171,7 @@ class BarChart extends Component {
         </div>
      )*/
      return (
-        <div className="test">
+        <div>
             <canvas
                 id="myChart"
                 ref={this.chartRef}
