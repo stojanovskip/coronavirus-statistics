@@ -1,7 +1,10 @@
 import React, {Component} from 'react';
 import * as d3 from "d3";
+import Chart from "chart.js";
+
 
 class BarChart extends Component {
+    chartRef = React.createRef();
     constructor(){
         super();
         this.state={
@@ -22,11 +25,12 @@ class BarChart extends Component {
             let countriesList = [];
             data.map((c)=>{
                 return(
-                    casesList.push({"cases": c.cases, "country":c.country}),
+                    casesList.push({"cases": c.cases, "country":c.country, "deaths":c.deaths}),
                     countriesList.push(c.country)
                 )
             });
-            this.drawChart(casesList, countriesList);
+            this.drawChartJS(casesList);
+//            this.drawChart(casesList, countriesList);
             let countries = data.map((c)=>{  
              return(
                  <tr key={c.country}>
@@ -47,8 +51,34 @@ class BarChart extends Component {
         })
      }
      componentDidMount() {
-        this.renderTableData();
-
+      this.renderTableData();
+      
+    }
+    drawChartJS(casesList){
+        const myChartRef = this.chartRef.current.getContext("2d");
+        let dataList = [];
+        let countryList = [];
+        for(let i = 0; i<casesList.length;i++)
+        {
+            dataList.push(casesList[i].deaths);
+            countryList.push(casesList[i].country);
+        }
+      new Chart(myChartRef, {
+          type: "line",
+          data: {
+              //Bring in data
+              labels: countryList,
+              datasets: [
+                  {
+                      label: "Sales",
+                      data: dataList,
+                  }
+              ]
+          },
+          options: {
+              //Customize chart options
+          }
+      });
     }
     
     drawChart(casesList) {
@@ -80,7 +110,7 @@ class BarChart extends Component {
         .text(d => d.country)
       }
           
-    render(){
+    render(){/*
         return (
         <div>
             <div id={"#" + this.props.id}></div>
@@ -109,7 +139,15 @@ class BarChart extends Component {
            </table>
            </div>
         </div>
-     )
+     )*/
+     return (
+        <div className="test">
+            <canvas
+                id="myChart"
+                ref={this.chartRef}
+            />
+        </div>
+    )
     }
   }
       
