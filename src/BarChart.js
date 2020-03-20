@@ -101,98 +101,106 @@ class BarChart extends Component {
                 recoveredList.push(casesList[i].recovered)
             }
         }
-
-      new Chart(myChartRef, {
-          type: "bar",
-          data: {
-              //Bring in data
-              labels: countryList,
-              datasets: [
-                  {
-                      label: "Deaths",
-                      type: "line",
-                      data: deathList,
-                      borderColor: "#7F171F",
-                      fill: "#7F171F",
-                      },
-                  {
-                      label: "Cases",
-                      data: caseList,
-                      type: "line",
-                      borderColor:" #003366",
-                      fill:" #003366",
-                  },
-                  {
-                      label: "Today Cases",
-                      type: "line",
-                      borderColor:"#B67721",
-                      fill:"#B67721",
-                      data: todayCasesList,
-                  },
-                  {
-                      label: "Recovered",
-                      type: "line",
-                      borderColor:"#21B6A8",
-                      fill:"#21B6A8",
-                      data: recoveredList,
-                  },
-                  {
-                      label: "Today Deaths",
-                      type: "line",
-                      borderColor: "#B6212D",
-                      fill: "#B6212D",
-                      data: todayDeathsList,
-                  },
-                  {
-                      label: "Active",
-                      type: "line",
-                      borderColor:"#177F75",
-                      fill:"#177F75",
-                      data: activeList,
-                  },{
+        let datasetBars = [];
+        if(str=="")
+        {
+            datasetBars = [
+                {
                     label: "Deaths",
-                    type: "bar",
+                    type: "line",
                     data: deathList,
-                    backgroundColor: "#7F171F",
+                    borderColor: "#7F171F",
                     fill: "#7F171F",
                     },
                 {
                     label: "Cases",
                     data: caseList,
-                    type: "bar",
-                    backgroundColor:" #003366",
+                    type: "line",
+                    borderColor:" #003366",
                     fill:" #003366",
                 },
                 {
                     label: "Today Cases",
-                    type: "bar",
-                    backgroundColor:"#B67721",
+                    type: "line",
+                    borderColor:"#B67721",
                     fill:"#B67721",
                     data: todayCasesList,
                 },
                 {
                     label: "Recovered",
-                    type: "bar",
-                    backgroundColor:"#21B6A8",
+                    type: "line",
+                    borderColor:"#21B6A8",
                     fill:"#21B6A8",
                     data: recoveredList,
                 },
                 {
                     label: "Today Deaths",
-                    type: "bar",
-                    backgroundColor: "#B6212D",
+                    type: "line",
+                    borderColor: "#B6212D",
+                    fill: "#B6212D",
                     data: todayDeathsList,
-                    labels: todayDeathsList
                 },
                 {
                     label: "Active",
-                    type: "bar",
-                    labels: activeList,
-                    backgroundColor:"#177F75",
+                    type: "line",
+                    borderColor:"#177F75",
                     fill:"#177F75",
                     data: activeList,
                 }
-              ]
+            ];
+        }
+        else{
+            datasetBars = [{
+                  label: "Deaths",
+                  type: "bar",
+                  data: deathList,
+                  backgroundColor: "#7F171F",
+                  fill: "#7F171F",
+                  },
+              {
+                  label: "Cases",
+                  data: caseList,
+                  type: "bar",
+                  backgroundColor:" #003366",
+                  fill:" #003366",
+              },
+              {
+                  label: "Today Cases",
+                  type: "bar",
+                  backgroundColor:"#B67721",
+                  fill:"#B67721",
+                  data: todayCasesList,
+              },
+              {
+                  label: "Recovered",
+                  type: "bar",
+                  backgroundColor:"#21B6A8",
+                  fill:"#21B6A8",
+                  data: recoveredList,
+              },
+              {
+                  label: "Today Deaths",
+                  type: "bar",
+                  backgroundColor: "#B6212D",
+                  data: todayDeathsList,
+                  labels: todayDeathsList
+              },
+              {
+                  label: "Active",
+                  type: "bar",
+                  labels: activeList,
+                  backgroundColor:"#177F75",
+                  fill:"#177F75",
+                  data: activeList,
+              }
+            ]
+        }
+      new Chart(myChartRef, {
+          type: "bar",
+          data: {
+              //Bring in data
+              labels: countryList,
+              datasets: datasetBars
           },
           options: { 
           }
