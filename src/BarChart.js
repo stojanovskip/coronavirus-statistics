@@ -83,35 +83,42 @@ class BarChart extends Component {
                       label: "Deaths",
                       type: "line",
                       data: deathList,
-                      borderColor: "#bd5044",
-                      fill: "#bd5044"
-                  },
+                      borderColor: "#7F171F",
+                      fill: "#7F171F",
+                      },
                   {
                       label: "Cases",
                       data: caseList,
                       type: "line",
-                      borderColor: "#3e95cd",
+                      borderColor:" #003366",
+                      fill:" #003366",
                   },
                   {
                       label: "Today Cases",
                       type: "line",
+                      borderColor:"#B67721",
+                      fill:"#B67721",
                       data: todayCasesList,
                   },
                   {
                       label: "Recovered",
                       type: "line",
+                      borderColor:"#21B6A8",
+                      fill:"#21B6A8",
                       data: recoveredList,
                   },
                   {
                       label: "Today Deaths",
                       type: "line",
-                      borderColor: "#bd5044",
-                      fill: "#bd5044",
+                      borderColor: "#B6212D",
+                      fill: "#B6212D",
                       data: todayDeathsList,
                   },
                   {
                       label: "Active",
                       type: "line",
+                      borderColor:"#177F75",
+                      fill:"#177F75",
                       data: activeList,
                   }
               ]
