@@ -54,7 +54,12 @@ class BarChart extends Component {
       this.renderTableData();
       
     }
-    drawChartJS(casesList){
+    drawChartJS(casesList, str, orderBy){
+        if(str == null)
+        {
+            str=""
+        }
+        
         const myChartRef = this.chartRef.current.getContext("2d");
         let deathList = [];
         let countryList = [];
@@ -63,16 +68,40 @@ class BarChart extends Component {
         let todayCasesList = [];
         let activeList = [];
         let recoveredList = [];
+        switch(orderBy){
+            case "active":
+                casesList.sort((a, b) => (a.active > b.active) ? -1 : 1);
+                break;
+                case "recovered":
+                    casesList.sort((a, b) => (a.recovered > b.recovered) ? -1 : 1);
+                    break;
+                    case "cases":
+                        casesList.sort((a, b) => (a.cases > b.cases) ? -1 : 1);
+                        break;
+                        case "deaths":
+                            casesList.sort((a, b) => (a.deaths > b.deaths) ? -1 : 1);
+                            break;
+                            case "todayCases":
+                                casesList.sort((a, b) => (a.todayCases > b.todayCases) ? -1 : 1);
+                                break;
+                                case "todayDeaths":
+                                    casesList.sort((a, b) => (a.todayDeaths > b.todayDeaths) ? -1 : 1);
+                                    break;
+                    }
+
         for(let i = 0; i<casesList.length;i++)
         {
-            deathList.push(casesList[i].deaths);
-            countryList.push(casesList[i].country);
-            caseList.push(casesList[i].cases);
-            todayDeathsList.push(casesList[i].todayDeaths);
-            todayCasesList.push(casesList[i].todayCases);
-            activeList.push(casesList[i].active);
-            recoveredList.push(casesList[i].recovered)
+            if(casesList[i].country.toLowerCase().includes(str.toLowerCase())){
+                deathList.push(casesList[i].deaths);
+                countryList.push(casesList[i].country);
+                caseList.push(casesList[i].cases);
+                todayDeathsList.push(casesList[i].todayDeaths);
+                todayCasesList.push(casesList[i].todayCases);
+                activeList.push(casesList[i].active);
+                recoveredList.push(casesList[i].recovered)
+            }
         }
+
       new Chart(myChartRef, {
           type: "bar",
           data: {
@@ -126,9 +155,6 @@ class BarChart extends Component {
           options: {
               chartArea: {
             backgroundColor: 'rgba(255, 255,255, 1)'
-        },  title: {
-            display: true,
-            text: 'Corona Virus Statistics'
         }
           }
       });
@@ -193,12 +219,25 @@ class BarChart extends Component {
            </div>
         </div>
      )*/
-     return (
+     return (<div>
+         <h1>Corona Virus Statistics</h1>
         <div>
+            <p>Country</p>
+            <input placeholder="Type a Country" onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
+            <p>Order by</p>
+            <select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
+                <option value="cases">Number of cases</option>
+                <option value="deaths">Number of deaths</option>
+                <option value="todayCases">Number of today cases</option>
+                <option value="todayDeaths">Number of today deaths</option>
+                <option value="active">Number of active cases</option>
+                <option value="recovered">Number of recovered cases</option>
+            </select>
             <canvas
                 id="myChart"
                 ref={this.chartRef}
             />
+        </div>
         </div>
     )
     }
