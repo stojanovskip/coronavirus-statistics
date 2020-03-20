@@ -74,39 +74,55 @@ class BarChart extends Component {
             recoveredList.push(casesList[i].recovered)
         }
       new Chart(myChartRef, {
-          type: "line",
+          type: "bar",
           data: {
               //Bring in data
               labels: countryList,
               datasets: [
                   {
                       label: "Deaths",
-                      data: deathList
+                      type: "line",
+                      data: deathList,
+                      borderColor: "#bd5044",
+                      fill: "#bd5044"
                   },
                   {
                       label: "Cases",
                       data: caseList,
+                      type: "line",
+                      borderColor: "#3e95cd",
                   },
                   {
                       label: "Today Cases",
+                      type: "line",
                       data: todayCasesList,
                   },
                   {
                       label: "Recovered",
+                      type: "line",
                       data: recoveredList,
                   },
                   {
                       label: "Today Deaths",
+                      type: "line",
+                      borderColor: "#bd5044",
+                      fill: "#bd5044",
                       data: todayDeathsList,
                   },
                   {
                       label: "Active",
+                      type: "line",
                       data: activeList,
                   }
               ]
           },
           options: {
-              //Customize chart options
+              chartArea: {
+            backgroundColor: 'rgba(255, 255,255, 1)'
+        },  title: {
+            display: true,
+            text: 'Corona Virus Statistics'
+        }
           }
       });
     }
