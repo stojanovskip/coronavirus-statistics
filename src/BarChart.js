@@ -70,7 +70,7 @@ class BarChart extends Component {
               labels: countryList,
               datasets: [
                   {
-                      label: "Sales",
+                      label: "Deaths",
                       data: dataList,
                   }
               ]
