@@ -88,6 +88,8 @@ section{
 
 .infoData{
   display:flex; 
+  width: 100%;
+  flex-wrap: wrap;
   justify-content: space-around;
   flex-direction:row;
 }
