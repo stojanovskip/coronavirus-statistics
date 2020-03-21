@@ -11,7 +11,7 @@ class BarChart extends Component {
         this.state={
             casesList:[],
             language: 'en',
-            phrases: [{"lang": "mk","totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Активни","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths"}]
+            phrases: [{"lang": "mk","totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths"}]
         };
         
     }
@@ -212,7 +212,6 @@ class BarChart extends Component {
             this.myChart.destroy();
         }
         catch{}
-            console.log("destroyed");
       this.myChart = new Chart(myChartRef, {
           type: "bar",
           data: {
@@ -259,7 +258,6 @@ class BarChart extends Component {
         .text(d => d.country)
       }
       changeLanguage(lang) {
-        console.log("language changed to: " + lang);
         this.setState({
           language:  lang
         })
@@ -306,17 +304,16 @@ class BarChart extends Component {
      <div className="infoData">
          <div>
          {this.state.language === 'en' ? 'Language:' : 'Јазик:'}
-         </div>
-        <div>
-            <select onChange={(e)=>this.changeLanguage(e.target.value)}>
+         
+            <select className="infoChild" onChange={(e)=>this.changeLanguage(e.target.value)}>
                 <option value="en">English</option>
                 <option value="mk">Македонски</option>
             </select>
             </div><div>
             {this.state.language === 'en' ? 'Country:' : 'Држава:'}
-            </div><div><input placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
+            <input className="infoChild" placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
             </div><div>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}
-            </div><div><select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
+            <select className="infoChild" onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
                 <option value="cases">{this.state.language === 'en' ? 'Number of total cases' : 'Вкупно случаи'}</option>
                 <option value="deaths">{this.state.language === 'en' ? 'Number of total deaths' : 'Вкупно смртни случаи'}</option>
                 <option value="todayCases">{this.state.language==='en'? 'Number of today cases': 'Денешни случаи'}</option>
