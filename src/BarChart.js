@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import * as d3 from "d3";
 import Chart from "chart.js";
 
 
@@ -35,7 +34,6 @@ class BarChart extends Component {
                 )
             });
             this.drawChartJS(casesList);
-//            this.drawChart(casesList, countriesList);
             data.map((c)=>{  
              return(
                  <tr key={c.country}>
@@ -212,7 +210,6 @@ class BarChart extends Component {
             ]
         }
         
-        //this.setState({casesList: casesList});
         try{
             this.myChart.destroy();
         }
@@ -234,34 +231,6 @@ class BarChart extends Component {
 
     }
     
-    drawChart(casesList) {
-      let w = 1000;
-      let h = 500;
-      const svg = d3.select("body")
-      .append("svg")
-      .attr("width", w)
-      .attr("height", h)
-      .style("margin-left", 100)
-      .style("overflow-x", "scroll");
-      
-      svg.selectAll("rect")
-        .data(casesList)
-        .enter()
-        .append("rect")
-        .attr("x", (d, i) => i * 70)
-        .attr("y", (d, i) => h - d.cases/600)
-        .attr("width", 65)
-        .attr("height", (d, i) => d.cases/600 )
-        .attr("fill", "grey")
-
-        svg.selectAll("text")
-        .data(casesList)
-        .enter()
-        .append("text")
-        .attr("x", (d, i) => i * 70 + 2)
-        .attr("y", (d, i) => h - d.cases/600 - 10)
-        .text(d => d.country)
-      }
       changeLanguage(lang) {
         this.setState({
           language:  lang
@@ -272,36 +241,7 @@ class BarChart extends Component {
       getLang(){
           return this.state.language;
       }
-    render(){/*
-        return (
-        <div>
-            <div id={"#" + this.props.id}></div>
-     
-           <h1 id='title'>CoVid19 Cases</h1>
-            <div class="tbl-header">
-           <table align="center">
-               <thead>
-               <tr>
-               <th>Country</th>
-               <th>Cases</th>
-               <th>Today Cases</th>
-               <th>Deaths</th>
-               <th>Today Deaths</th>
-               <th>Recovered</th>
-               <th>Active</th>
-               </tr>
-               </thead>
-               </table>
-               </div>
-               <div class="tbl-content">
-               <table>
-              <tbody>
-                 {this.state.countries}
-              </tbody>
-           </table>
-           </div>
-        </div>
-     )*/
+    render(){
      return (
          
      <div>
