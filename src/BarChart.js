@@ -11,8 +11,11 @@ class BarChart extends Component {
         this.state={
             casesList:[],
             language: 'en',
-            phrases: [{"lang": "mk","totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths"}]
+            phrases: [{"lang": "mk", "title": "Корона Статистика", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths", "title":"Coronavirus Statistics"}]
         };
+        
+        let phrase = this.state.phrases[1];
+        document.title = phrase.title;
         
     }
     
@@ -106,13 +109,15 @@ class BarChart extends Component {
             }
         }
         let datasetBars = [];
-        let phrase = this.state.phrases[0];
+        let phrase = this.state.phrases[1];
         for (let index = 0; index < this.state.phrases.length; index++) {
             if(this.state.phrases[index].lang == this.state.language)
             {
                 phrase = this.state.phrases[index];   
             }
         }
+        document.title = phrase.title;
+
         if(str==="")
         {
             datasetBars = [
