@@ -260,9 +260,9 @@ class BarChart extends Component {
       }
       changeLanguage(lang) {
         console.log("language changed to: " + lang);
-        /*this.setState({
+        this.setState({
           language:  lang
-        })*/
+        })
         this.state.language = lang;
         this.drawChartJS(this.state.casesList);
       }
