@@ -4,13 +4,12 @@ import Chart from "chart.js";
 
 
 class BarChart extends Component {
+    myChart;
     chartRef = React.createRef();
     constructor(){
         super();
         this.state={
-            countries:[],
-            casesList:[],
-            countriesList:[]
+            casesList:[]
         };
     }
     
@@ -31,7 +30,7 @@ class BarChart extends Component {
             });
             this.drawChartJS(casesList);
 //            this.drawChart(casesList, countriesList);
-            let countries = data.map((c)=>{  
+            data.map((c)=>{  
              return(
                  <tr key={c.country}>
                      <td>{c.country}</td>
@@ -46,8 +45,6 @@ class BarChart extends Component {
             });
             
             this.setState({casesList: casesList});
-            this.setState({countriesList: countriesList});
-            this.setState({countries: countries});
         })
      }
      componentDidMount() {
@@ -68,26 +65,30 @@ class BarChart extends Component {
         let todayCasesList = [];
         let activeList = [];
         let recoveredList = [];
+        
         switch(orderBy){
             case "active":
                 casesList.sort((a, b) => (a.active > b.active) ? -1 : 1);
                 break;
-                case "recovered":
-                    casesList.sort((a, b) => (a.recovered > b.recovered) ? -1 : 1);
-                    break;
-                    case "cases":
-                        casesList.sort((a, b) => (a.cases > b.cases) ? -1 : 1);
-                        break;
-                        case "deaths":
-                            casesList.sort((a, b) => (a.deaths > b.deaths) ? -1 : 1);
-                            break;
-                            case "todayCases":
-                                casesList.sort((a, b) => (a.todayCases > b.todayCases) ? -1 : 1);
-                                break;
-                                case "todayDeaths":
-                                    casesList.sort((a, b) => (a.todayDeaths > b.todayDeaths) ? -1 : 1);
-                                    break;
-                    }
+            case "recovered":
+                casesList.sort((a, b) => (a.recovered > b.recovered) ? -1 : 1);
+                break;
+            case "cases":
+                casesList.sort((a, b) => (a.cases > b.cases) ? -1 : 1);
+                break;
+            case "deaths":
+                casesList.sort((a, b) => (a.deaths > b.deaths) ? -1 : 1);
+                break;
+            case "todayCases":
+                casesList.sort((a, b) => (a.todayCases > b.todayCases) ? -1 : 1);
+                break;
+            case "todayDeaths":
+                casesList.sort((a, b) => (a.todayDeaths > b.todayDeaths) ? -1 : 1);
+                break;
+            default:
+                casesList.sort((a, b) => (a.cases > b.cases) ? -1 : 1);
+                break;
+        }
 
         for(let i = 0; i<casesList.length;i++)
         {
@@ -102,7 +103,7 @@ class BarChart extends Component {
             }
         }
         let datasetBars = [];
-        if(str=="")
+        if(str==="")
         {
             datasetBars = [
                 {
@@ -111,7 +112,7 @@ class BarChart extends Component {
                     data: deathList,
                     borderColor: "#7F171F",
                     fill: "#7F171F",
-                    },
+                },
                 {
                     label: "Cases",
                     data: caseList,
@@ -151,14 +152,14 @@ class BarChart extends Component {
         }
         else{
             datasetBars = [{
-                  label: "Deaths",
+                  label: "Total Deaths",
                   type: "bar",
                   data: deathList,
                   backgroundColor: "#7F171F",
                   fill: "#7F171F",
-                  },
+                },
               {
-                  label: "Cases",
+                  label: "Total Cases",
                   data: caseList,
                   type: "bar",
                   backgroundColor:" #003366",
@@ -195,7 +196,13 @@ class BarChart extends Component {
               }
             ]
         }
-      new Chart(myChartRef, {
+        
+        //this.setState({casesList: casesList});
+        try{this.myChart.destroy();
+        }
+        catch{}
+            console.log("destroyed");
+      this.myChart = new Chart(myChartRef, {
           type: "bar",
           data: {
               //Bring in data
@@ -203,6 +210,7 @@ class BarChart extends Component {
               datasets: datasetBars
           },
           options: { 
+              responsive: true
           }
       });
     }
@@ -273,8 +281,8 @@ class BarChart extends Component {
             <input placeholder="Type a Country" onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
             <p>Order by</p>
             <select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
-                <option value="cases">Number of cases</option>
-                <option value="deaths">Number of deaths</option>
+                <option value="cases">Number of total cases</option>
+                <option value="deaths">Number of total deaths</option>
                 <option value="todayCases">Number of today cases</option>
                 <option value="todayDeaths">Number of today deaths</option>
                 <option value="active">Number of active cases</option>
