@@ -85,3 +85,9 @@ body{
 section{
   margin: 50px;
 }
+
+.infoData{
+  display:flex; 
+  justify-content: space-around;
+  flex-direction:row;
+}

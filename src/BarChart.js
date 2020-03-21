@@ -10,7 +10,8 @@ class BarChart extends Component {
         super();
         this.state={
             casesList:[],
-            language: 'en'
+            language: 'en',
+            phrases: [{"lang": "mk","totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Активни","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths"}]
         };
         
     }
@@ -105,46 +106,53 @@ class BarChart extends Component {
             }
         }
         let datasetBars = [];
+        let phrase = this.state.phrases[0];
+        for (let index = 0; index < this.state.phrases.length; index++) {
+            if(this.state.phrases[index].lang == this.state.language)
+            {
+                phrase = this.state.phrases[index];   
+            }
+        }
         if(str==="")
         {
             datasetBars = [
                 {
-                    label: "Deaths",
+                    label: phrase.totalDeaths,
                     type: "line",
                     data: deathList,
                     borderColor: "#7F171F",
                     fill: "#7F171F",
                 },
                 {
-                    label: "Total Cases",
+                    label: phrase.totalCases,
                     data: caseList,
                     type: "line",
                     borderColor:" #003366",
                     fill:" #003366",
                 },
                 {
-                    label: "Today Cases",
+                    label: phrase.todayCases,
                     type: "line",
                     borderColor:"#B67721",
                     fill:"#B67721",
                     data: todayCasesList,
                 },
                 {
-                    label: "Recovered",
+                    label: phrase.recovered,
                     type: "line",
                     borderColor:"#21B6A8",
                     fill:"#21B6A8",
                     data: recoveredList,
                 },
                 {
-                    label: "Today Deaths",
+                    label: phrase.todayDeaths,
                     type: "line",
                     borderColor: "#B6212D",
                     fill: "#B6212D",
                     data: todayDeathsList,
                 },
                 {
-                    label: "Active",
+                    label: phrase.active,
                     type: "line",
                     borderColor:"#177F75",
                     fill:"#177F75",
@@ -154,42 +162,42 @@ class BarChart extends Component {
         }
         else{
             datasetBars = [{
-                  label: "Total Deaths",
+                  label: phrase.totalDeaths,
                   type: "bar",
                   data: deathList,
                   backgroundColor: "#7F171F",
                   fill: "#7F171F",
                 },
-              {
-                  label: "Total Cases",
+              {                    
+                  label: phrase.totalCases,
                   data: caseList,
                   type: "bar",
                   backgroundColor:" #003366",
                   fill:" #003366",
               },
               {
-                  label: "Today Cases",
+                  label: phrase.todayCases,
                   type: "bar",
                   backgroundColor:"#B67721",
                   fill:"#B67721",
                   data: todayCasesList,
               },
               {
-                  label: "Recovered",
+                  label: phrase.recovered,
                   type: "bar",
                   backgroundColor:"#21B6A8",
                   fill:"#21B6A8",
                   data: recoveredList,
               },
               {
-                  label: "Today Deaths",
+                  label: phrase.todayDeaths,
                   type: "bar",
                   backgroundColor: "#B6212D",
                   data: todayDeathsList,
                   labels: todayDeathsList
               },
               {
-                  label: "Active",
+                  label: phrase.active,
                   type: "bar",
                   labels: activeList,
                   backgroundColor:"#177F75",
@@ -213,21 +221,13 @@ class BarChart extends Component {
               datasets: datasetBars
           },
           options: { 
+              maintainAspectRatio: false,
               responsive: true
-          },
-          
-          onAnimationComplete: function () {
-            var sourceCanvas = this.chart.ctx.canvas;
-            var copyWidth = this.scale.xScalePaddingLeft - 5;
-            // the +5 is so that the bottommost y axis label is not clipped off
-            // we could factor this in using measureText if we wanted to be generic
-            var copyHeight = this.scale.endPoint + 5;
-            var targetCtx = myChartRef;
-            targetCtx.canvas.width = copyWidth;
-            targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
-        }
+          }
           
       });
+      this.myChart.canvas.parentNode.style.height = '90vh';
+
     }
     
     drawChart(casesList) {
@@ -259,9 +259,12 @@ class BarChart extends Component {
         .text(d => d.country)
       }
       changeLanguage(lang) {
-        this.setState({
+        console.log("language changed to: " + lang);
+        /*this.setState({
           language:  lang
-        })
+        })*/
+        this.state.language = lang;
+        this.drawChartJS(this.state.casesList);
       }
       getLang(){
           return this.state.language;
@@ -296,18 +299,24 @@ class BarChart extends Component {
            </div>
         </div>
      )*/
-     return (<div>
-         <h1>{this.state.language === 'en' ? 'Corona Virus Statistics' : 'Статистика за Корона вирусот'}</h1>
+     return (
+         
+     <div>
+    <h1>{this.state.language === 'en' ? 'Corona Virus Statistics' : 'Статистика за Корона вирусот'}</h1>
+     <div className="infoData">
+         <div>
+         {this.state.language === 'en' ? 'Language:' : 'Јазик:'}
+         </div>
         <div>
             <select onChange={(e)=>this.changeLanguage(e.target.value)}>
                 <option value="en">English</option>
                 <option value="mk">Македонски</option>
             </select>
-            <div id="infoData">
-            <p>{this.state.language === 'en' ? 'Country' : 'Држава'}</p>
-            <input placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
-            <p>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}</p>
-            <select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
+            </div><div>
+            {this.state.language === 'en' ? 'Country:' : 'Држава:'}
+            </div><div><input placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
+            </div><div>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}
+            </div><div><select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
                 <option value="cases">{this.state.language === 'en' ? 'Number of total cases' : 'Вкупно случаи'}</option>
                 <option value="deaths">{this.state.language === 'en' ? 'Number of total deaths' : 'Вкупно смртни случаи'}</option>
                 <option value="todayCases">{this.state.language==='en'? 'Number of today cases': 'Денешни случаи'}</option>
@@ -316,11 +325,11 @@ class BarChart extends Component {
                 <option value="recovered">{this.state.language==='en'? 'Number of recovered cases': 'Излечени случаи'}</option>
             </select>
             </div>
+        </div>
             <canvas 
                 id="myChart"
                 ref={this.chartRef}
             />
-        </div>
         </div>
     )
     }
