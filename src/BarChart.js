@@ -9,8 +9,10 @@ class BarChart extends Component {
     constructor(){
         super();
         this.state={
-            casesList:[]
+            casesList:[],
+            language: 'en'
         };
+        
     }
     
      renderTableData() {
@@ -114,7 +116,7 @@ class BarChart extends Component {
                     fill: "#7F171F",
                 },
                 {
-                    label: "Cases",
+                    label: "Total Cases",
                     data: caseList,
                     type: "line",
                     borderColor:" #003366",
@@ -198,7 +200,8 @@ class BarChart extends Component {
         }
         
         //this.setState({casesList: casesList});
-        try{this.myChart.destroy();
+        try{
+            this.myChart.destroy();
         }
         catch{}
             console.log("destroyed");
@@ -211,7 +214,19 @@ class BarChart extends Component {
           },
           options: { 
               responsive: true
-          }
+          },
+          
+          onAnimationComplete: function () {
+            var sourceCanvas = this.chart.ctx.canvas;
+            var copyWidth = this.scale.xScalePaddingLeft - 5;
+            // the +5 is so that the bottommost y axis label is not clipped off
+            // we could factor this in using measureText if we wanted to be generic
+            var copyHeight = this.scale.endPoint + 5;
+            var targetCtx = myChartRef;
+            targetCtx.canvas.width = copyWidth;
+            targetCtx.drawImage(sourceCanvas, 0, 0, copyWidth, copyHeight, 0, 0, copyWidth, copyHeight);
+        }
+          
       });
     }
     
@@ -243,7 +258,14 @@ class BarChart extends Component {
         .attr("y", (d, i) => h - d.cases/600 - 10)
         .text(d => d.country)
       }
-          
+      changeLanguage(lang) {
+        this.setState({
+          language:  lang
+        })
+      }
+      getLang(){
+          return this.state.language;
+      }
     render(){/*
         return (
         <div>
@@ -275,20 +297,26 @@ class BarChart extends Component {
         </div>
      )*/
      return (<div>
-         <h1>Corona Virus Statistics</h1>
+         <h1>{this.state.language === 'en' ? 'Corona Virus Statistics' : 'Статистика за Корона вирусот'}</h1>
         <div>
-            <p>Country</p>
-            <input placeholder="Type a Country" onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
-            <p>Order by</p>
-            <select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
-                <option value="cases">Number of total cases</option>
-                <option value="deaths">Number of total deaths</option>
-                <option value="todayCases">Number of today cases</option>
-                <option value="todayDeaths">Number of today deaths</option>
-                <option value="active">Number of active cases</option>
-                <option value="recovered">Number of recovered cases</option>
+            <select onChange={(e)=>this.changeLanguage(e.target.value)}>
+                <option value="en">English</option>
+                <option value="mk">Македонски</option>
             </select>
-            <canvas
+            <div id="infoData">
+            <p>{this.state.language === 'en' ? 'Country' : 'Држава'}</p>
+            <input placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
+            <p>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}</p>
+            <select onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
+                <option value="cases">{this.state.language === 'en' ? 'Number of total cases' : 'Вкупно случаи'}</option>
+                <option value="deaths">{this.state.language === 'en' ? 'Number of total deaths' : 'Вкупно смртни случаи'}</option>
+                <option value="todayCases">{this.state.language==='en'? 'Number of today cases': 'Денешни случаи'}</option>
+                <option value="todayDeaths">{this.state.language==='en'? 'Number of today deaths': 'Денешни смртни случаи'}</option>
+                <option value="active">{this.state.language==='en'? 'Number of active cases': 'Активни случаи'}</option>
+                <option value="recovered">{this.state.language==='en'? 'Number of recovered cases': 'Излечени случаи'}</option>
+            </select>
+            </div>
+            <canvas 
                 id="myChart"
                 ref={this.chartRef}
             />
