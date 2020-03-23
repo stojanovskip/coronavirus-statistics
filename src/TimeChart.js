@@ -12,8 +12,10 @@ class TimeChart extends Component {
             country: null,
             language: 'en',
             phrase: null,
+            opts: [],
             phrases: [{"lang": "mk", "title": "Корона Статистика", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths", "title":"Coronavirus Statistics"}]
         };
+        this.setCountry();
         
         let phrase = this.state.phrases[1];
         document.title = phrase.title;
@@ -74,7 +76,8 @@ class TimeChart extends Component {
         })
      }
      componentDidMount() {
-        this.renderTableData(this.props.country.country);      
+        this.renderTableData(this.props.country.country);  
+//        this.setCountry();    
     }
     getTimeline(orderBy)
     {
@@ -87,8 +90,10 @@ class TimeChart extends Component {
         }
     }
 
-    setCountry(casesList, str, orderBy)
+    setCountry()
     {
+        let opts = []; 
+        let countries = [];
         fetch('https://coronavirus-monitor.p.rapidapi.com/coronavirus/cases_by_country.php',
         {  
             headers: {
@@ -101,11 +106,20 @@ class TimeChart extends Component {
         })
         .then(data => {
             data.countries_stat.map((c)=>{
-                if(c.country_name.toLowerCase().includes(str.toLowerCase()))
-                {
-                    this.state.country = c.country_name;
-                }
+                countries.push(c.country_name);
             });
+            countries.sort();
+            countries.forEach(c => {
+                if(this.props.country.country == c)
+                    {
+                        opts.push(<option key= {c} selected value={c}> {c} </option>);    
+                    }
+                    else{
+                        opts.push(<option key= {c} value={c}> {c} </option>); 
+                    }
+            });
+            this.state.opts = opts;
+    
         })   
     }
     drawChartJS(casesList, str, orderBy){
@@ -322,8 +336,11 @@ class TimeChart extends Component {
             </select>
             </div><div>
             {this.state.language === 'en' ? 'Country:' : 'Држава:'}
-            <input className="infoChild" placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.setCountry(this.state.casesList, e.target.value)} ></input>
-            <input type="button" className="infoChild" onClick={(e) => this.getTimeline(this.state.casesList, e.target.value)} value={this.state.language === 'en' ? 'Chronological' : 'Хронолошки'} ></input>
+            <select className="infoChild" id="countrySelect" onChange={(e)=>this.renderTableData(e.target.value)}>
+                  {this.state.opts}
+            </select>
+
+            <input type="button" className="infoChild" onClick={(e) => this.getTimeline(this.state.casesList, e.target.value)} value={this.state.language === 'en' ? 'Choose country' : 'Избери држава'} ></input>
             </div><div>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}
             <select className="infoChild" onChange={(e)=>this.getTimeline(e.target.value)}>
                 <option value="asc">{this.state.language === 'en' ? 'Date аscending' : 'Датум растечки'}</option>
