@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import Chart from "chart.js";
 
 
-class BarChart extends Component {
+class TimeChart extends Component {
     myChart;
     chartRef = React.createRef();
     constructor(){
@@ -11,19 +11,20 @@ class BarChart extends Component {
             casesList:[],
             country: null,
             language: 'en',
-            phrases: [{"lang": "mk", "title": "Корона Статистика", "errorMsg":"Ве молиме, внесете држава.", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths",  "errorMsg":"Please, input a country.","title":"Coronavirus Statistics"}],
-            phrase: null
+            phrase: null,
+            phrases: [{"lang": "mk", "title": "Корона Статистика", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths", "title":"Coronavirus Statistics"}]
         };
         
         let phrase = this.state.phrases[1];
         document.title = phrase.title;
         this.state.phrase = phrase;
-        
+
     }
     
-     renderTableData() {
+     renderTableData(country, orderBy) {
+         this.state.country = country;
  //       fetch('https://coronavirus-19-api.herokuapp.com/countries')
-        fetch('https://coronavirus-monitor.p.rapidapi.com/coronavirus/cases_by_country.php',
+        fetch('https://coronavirus-monitor.p.rapidapi.com/coronavirus/cases_by_particular_country.php?country='+country,
         {  
             headers: {
               'X-RapidAPI-Host': 'coronavirus-monitor.p.rapidapi.com', 
@@ -37,14 +38,25 @@ class BarChart extends Component {
             
             let casesList = [];
             let countriesList = [];
-            data.countries_stat.map((c)=>{
+            data.stat_by_country.map((c)=>{
+                
+                try{
+                    c.total_cases = c.total_cases.replace(',','');
+                    c.total_deaths = c.total_deaths.replace(',','');
+                    c.total_recovered = c.total_recovered.replace(',','');
+                    c.new_deaths = c.new_deaths.replace(',','');
+                    c.new_cases = c.new_cases.replace(',','');
+                    c.active_cases = c.active_cases.replace(',','');
+                }catch{
+                    
+                }
                 return(
-                    casesList.push({"cases": c.cases.replace(',',''), "country":c.country_name, "deaths":c.deaths.replace(',',''), "recovered":c.total_recovered.replace(',',''), "todayDeaths":c.new_deaths.replace(',',''), "todayCases":c.new_cases.replace(',',''), "active":c.active_cases.replace(',','')}),
+                    casesList.push({"cases": c.total_cases, "country":c.country_name, "deaths":c.total_deaths, "recovered":c.total_recovered, "todayDeaths":c.new_deaths, "todayCases":c.new_cases, "active":c.active_cases, "time":c.record_date}),
                     countriesList.push(c.country_name)
                 )
             });
-            this.drawChartJS(casesList);
-            data.countries_stat.map((c)=>{  
+            this.drawChartJS(casesList, "", orderBy);
+/*            data.stat_by_country.map((c)=>{  
              return(
                  <tr key={c.country_name}>
                      <td>{c.country_name}</td>
@@ -56,33 +68,56 @@ class BarChart extends Component {
                      <td>{c.active_cases}</td>
                  </tr>
                 )
-            });
+            });*/   
             
             this.setState({casesList: casesList});
         })
      }
      componentDidMount() {
-      this.renderTableData();
-      
+        this.renderTableData(this.props.country.country);      
     }
-    getTimeline()
+    getTimeline(orderBy)
     {
         if(this.state.country != undefined)
-        {
-            window.location.href = '/timechart/country/'+this.state.country;
+        {        
+            this.renderTableData(this.state.country, orderBy);  
         }
         else{
             alert(this.state.phrase.errorMsg);
         }
+    }
+
+    setCountry(casesList, str, orderBy)
+    {
+        fetch('https://coronavirus-monitor.p.rapidapi.com/coronavirus/cases_by_country.php',
+        {  
+            headers: {
+              'X-RapidAPI-Host': 'coronavirus-monitor.p.rapidapi.com', 
+              'X-RapidAPI-Key': 'e9843df6f7mshaa54667ec07baf1p12224cjsn04cf86d86a81'
+            }
+        })
+            .then(results=>{
+            return results.json();
+        })
+        .then(data => {
+            data.countries_stat.map((c)=>{
+                if(c.country_name.toLowerCase().includes(str.toLowerCase()))
+                {
+                    this.state.country = c.country_name;
+                }
+            });
+        })   
     }
     drawChartJS(casesList, str, orderBy){
         if(str == null)
         {
             str="";
         }
+        
         const myChartRef = this.chartRef.current.getContext("2d");
         let deathList = [];
         let countryList = [];
+        let timelist = [];
         let caseList = [];
         let todayDeathsList = [];
         let todayCasesList = [];
@@ -90,26 +125,14 @@ class BarChart extends Component {
         let recoveredList = [];
         
         switch(orderBy){
-            case "active":
-                casesList.sort((a, b) => (parseInt(a.active) > parseInt(b.active)) ? -1 : 1);
+            case "asc":
+                casesList.sort((a, b) => (new Date(a)>new Date(b)) ? -1 : 1);
                 break;
-            case "recovered":
-                casesList.sort((a, b) => (parseInt(a.recovered) > parseInt(b.recovered)) ? -1 : 1);
-                break;
-            case "cases":
-                casesList.sort((a, b) => (parseInt(a.cases) > parseInt(b.cases)) ? -1 : 1);
-                break;
-            case "deaths":
-                casesList.sort((a, b) => (parseInt(a.deaths) > parseInt(b.deaths)) ? -1 : 1);
-                break;
-            case "todayCases":
-                casesList.sort((a, b) => (parseInt(a.todayCases) > parseInt(b.todayCases)) ? -1 : 1);
-                break;
-            case "todayDeaths":
-                casesList.sort((a, b) => (parseInt(a.todayDeaths) > parseInt(b.todayDeaths)) ? -1 : 1);
+            case "desc":
+                casesList.sort((a, b) => (new Date(a)>new Date(b)) ? 1 : -1);
                 break;
             default:
-                casesList.sort((a, b) => (parseInt(a.cases) > parseInt(b.cases)) ? -1 : 1);
+                casesList.sort((a, b) => (new Date(a)>new Date(b)) ? -1 : 1);
                 break;
         }
 
@@ -119,6 +142,12 @@ class BarChart extends Component {
                 deathList.push(casesList[i].deaths);
                 countryList.push(casesList[i].country);
                 caseList.push(casesList[i].cases);
+                let date = new Date(casesList[i].time);
+                const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date)
+                const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(date)
+                const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date)
+
+                timelist.push(da+"."+mo);
                 todayDeathsList.push(casesList[i].todayDeaths);
                 todayCasesList.push(casesList[i].todayCases);
                 activeList.push(casesList[i].active);
@@ -132,6 +161,7 @@ class BarChart extends Component {
             }
             catch{}
         }
+
         let datasetBars = [];
         let phrase = this.state.phrases[1];
         for (let index = 0; index < this.state.phrases.length; index++) {
@@ -140,7 +170,6 @@ class BarChart extends Component {
                 phrase = this.state.phrases[index];   
             }
         }
-        this.state.phrase = phrase;
         document.title = phrase.title;
 
         if(str==="")
@@ -243,10 +272,10 @@ class BarChart extends Component {
         }
         catch{}
       this.myChart = new Chart(myChartRef, {
-          type: "bar",
+          type: "line",
           data: {
               //Bring in data
-              labels: countryList,
+              labels: timelist,
               datasets: datasetBars
           },
           options: { 
@@ -258,13 +287,22 @@ class BarChart extends Component {
       this.myChart.canvas.parentNode.style.height = '90vh';
 
     }
-    
+    getAllCountries()
+    {
+        if(this.state.country != undefined)
+        {
+            window.location.href = '/';
+        }
+        else{
+            alert(this.state.phrase.errorMsg);
+        }
+    }
       changeLanguage(lang) {
         this.setState({
           language:  lang
         })
         this.state.language = lang;
-        this.drawChartJS(this.state.casesList);
+        this.getTimeline();
       }
       getLang(){
           return this.state.language;
@@ -284,21 +322,18 @@ class BarChart extends Component {
             </select>
             </div><div>
             {this.state.language === 'en' ? 'Country:' : 'Држава:'}
-            <input className="infoChild" placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.drawChartJS(this.state.casesList, e.target.value)} ></input>
+            <input className="infoChild" placeholder={this.state.language === 'en' ? 'Type a country' : 'Внесете држава'} onChange={(e) => this.setCountry(this.state.casesList, e.target.value)} ></input>
             <input type="button" className="infoChild" onClick={(e) => this.getTimeline(this.state.casesList, e.target.value)} value={this.state.language === 'en' ? 'Chronological' : 'Хронолошки'} ></input>
             </div><div>{this.state.language === 'en' ? 'Order by' : 'Сортирај по'}
-            <select className="infoChild" onChange={(e)=>this.drawChartJS(this.state.casesList,"",e.target.value)}>
-                <option value="cases">{this.state.language === 'en' ? 'Number of total cases' : 'Вкупно случаи'}</option>
-                <option value="deaths">{this.state.language === 'en' ? 'Number of total deaths' : 'Вкупно смртни случаи'}</option>
-                <option value="todayCases">{this.state.language==='en'? 'Number of today cases': 'Денешни случаи'}</option>
-                <option value="todayDeaths">{this.state.language==='en'? 'Number of today deaths': 'Денешни смртни случаи'}</option>
-                <option value="active">{this.state.language==='en'? 'Number of active cases': 'Активни случаи'}</option>
-                <option value="recovered">{this.state.language==='en'? 'Number of recovered cases': 'Излечени случаи'}</option>
+            <select className="infoChild" onChange={(e)=>this.getTimeline(e.target.value)}>
+                <option value="asc">{this.state.language === 'en' ? 'Date аscending' : 'Датум растечки'}</option>
+                <option value="desc">{this.state.language === 'en' ? 'Date descending' : 'Датум опаѓачки'}</option>
             </select>
-            </div>
-            <div>
-            </div>
+            </div>        
+            <input type="button" className="infoChild" onClick={(e) => this.getAllCountries()} value={this.state.language === 'en' ? 'All countries' : 'Сите држави'} ></input>
+
         </div>
+        <h2>{this.state.country}</h2>
             <canvas 
                 id="myChart"
                 ref={this.chartRef}
@@ -308,4 +343,4 @@ class BarChart extends Component {
     }
   }
       
-  export default BarChart;
+  export default TimeChart;
