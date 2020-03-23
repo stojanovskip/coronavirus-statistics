@@ -30,7 +30,7 @@ class TimeChart extends Component {
         {  
             headers: {
               'X-RapidAPI-Host': 'coronavirus-monitor.p.rapidapi.com', 
-              'X-RapidAPI-Key': 'e9843df6f7mshaa54667ec07baf1p12224cjsn04cf86d86a81'
+              'X-RapidAPI-Key': process.env.REACT_APP_API_KEY
             }
         })
             .then(results=>{
@@ -153,19 +153,22 @@ class TimeChart extends Component {
         for(let i = 0; i<casesList.length;i++)
         {
             if(casesList[i].country.toLowerCase().includes(str.toLowerCase())){
-                deathList.push(casesList[i].deaths);
-                countryList.push(casesList[i].country);
-                caseList.push(casesList[i].cases);
+
                 let date = new Date(casesList[i].time);
                 const ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date)
                 const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(date)
                 const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date)
 
                 timelist.push(da+"."+mo);
+                if(true){
+                deathList.push(casesList[i].deaths);
+                countryList.push(casesList[i].country);
+                caseList.push(casesList[i].cases);
                 todayDeathsList.push(casesList[i].todayDeaths);
                 todayCasesList.push(casesList[i].todayCases);
                 activeList.push(casesList[i].active);
                 recoveredList.push(casesList[i].recovered)
+                }
             }
         }
         if(str != null && str != "")

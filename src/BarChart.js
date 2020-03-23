@@ -27,7 +27,7 @@ class BarChart extends Component {
         {  
             headers: {
               'X-RapidAPI-Host': 'coronavirus-monitor.p.rapidapi.com', 
-              'X-RapidAPI-Key': 'e9843df6f7mshaa54667ec07baf1p12224cjsn04cf86d86a81'
+              'X-RapidAPI-Key': process.env.REACT_APP_API_KEY
             }
         })
             .then(results=>{
