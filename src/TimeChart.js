@@ -13,7 +13,7 @@ class TimeChart extends Component {
             language: 'en',
             phrase: null,
             opts: [],
-            phrases: [{"lang": "mk", "title": "Корона Статистика", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Нови случаи","todayDeaths":"Нови смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"New cases","todayDeaths":"New deaths", "title":"Coronavirus Statistics"}]
+            phrases: [{"lang": "mk","language": "Јазик","country":"Држава", "title": "Корона Статистика", "errorMsg":"Ве молиме, внесете држава.", "totalCases":"Вкупно случаи", "totalDeaths":"Вкупно смртни случаи", "active":"Активни","recovered":"Излечени","todayCases":"Денешни случаи","todayDeaths":"Денешни смртни случаи"}, {"lang":"en","totalCases":"Total cases", "totalDeaths": "Total deaths", "active":"Active","recovered":"Recovered","todayCases":"Today cases","todayDeaths":"Today deaths",  "errorMsg":"Please, input a country.","title":"Coronavirus Statistics","language": "Language","country":"Country"}],
         };
         this.setCountry();
         
